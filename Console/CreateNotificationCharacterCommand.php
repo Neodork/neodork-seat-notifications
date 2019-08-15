@@ -24,7 +24,7 @@ namespace Neodork\SeatNotifications\Console;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Modules\SeatNotifications\Entities\NotificationCharacter;
+use Neodork\SeatNotifications\Entities\NotificationCharacter;
 use Seat\Console\Bus\CharacterTokenShouldUpdate;
 use Seat\Eveapi\Jobs\Character\Notifications;
 use Seat\Eveapi\Models\Character\CharacterNotification;
