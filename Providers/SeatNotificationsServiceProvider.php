@@ -4,8 +4,8 @@ namespace Neodork\SeatNotifications\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
-use Modules\SeatNotifications\Console\CreateNotificationCharacterCommand;
-use Modules\SeatNotifications\Console\NotificationsCommand;
+use Neodork\SeatNotifications\Console\CreateNotificationCharacterCommand;
+use Neodork\SeatNotifications\Console\NotificationsCommand;
 
 class SeatNotificationsServiceProvider extends ServiceProvider
 {

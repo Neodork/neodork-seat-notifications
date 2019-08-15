@@ -6,7 +6,7 @@
     "active": 1,
     "order": 0,
     "providers": [
-        "Modules\\SeatNotifications\\Providers\\SeatNotificationsServiceProvider"
+        "Neodork\\SeatNotifications\\Providers\\SeatNotificationsServiceProvider"
     ],
     "aliases": {},
     "files": [],
