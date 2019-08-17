@@ -69,10 +69,13 @@ class NotificationsCommand extends Command
 
         $currentDate = now()->subSeconds(self::CACHE_DURATION)->format('Y-m-d H:i:s');
         $notificationCharacter = NotificationCharacter::where('updated_at', '<=', $currentDate)->first();
-        $token = RefreshToken::where('character_id', $notificationCharacter->character_id)->first();
-        Notifications::dispatch($token)->onQueue('medium');
-        $notificationCharacter->touch();
-
-        $this->info('Processed notification character token.');
+        if($notificationCharacter !== null){
+            $token = RefreshToken::where('character_id', $notificationCharacter->character_id)->first();
+            Notifications::dispatch($token)->onQueue('medium');
+            $notificationCharacter->touch();
+            $this->info('Processed notification character token.');
+        }else{
+            $this->info('No token available.');
+        }
     }
 }
