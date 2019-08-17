@@ -22,17 +22,16 @@
 
 namespace Neodork\SeatNotifications\Console;
 
-use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Neodork\SeatNotifications\Entities\NotificationCharacter;
-use Seat\Console\Bus\CharacterTokenShouldUpdate;
 use Seat\Eveapi\Jobs\Character\Notifications;
-use Seat\Eveapi\Models\Character\CharacterNotification;
 use Seat\Eveapi\Models\RefreshToken;
 
 class NotificationsCommand extends Command
 {
     const CACHE_DURATION = 600;
+    const CACHE_KEY = 'neodork.notifications.last_run';
 
     /**
      * The name and signature of the console command.
@@ -56,26 +55,24 @@ class NotificationsCommand extends Command
     public function handle()
     {
         $tokenCount = NotificationCharacter::all()->count();
-        $tokensToCheckPerRun = $tokenCount / self::CACHE_DURATION;
+        $cooldown = self::CACHE_DURATION / $tokenCount;
 
-        if ($tokensToCheckPerRun < 1) {
-            $tokensToCheckPerRun = 1;
+        $nextRun = (int) Cache::get(self::CACHE_KEY);
+
+        if ($nextRun > time()) {
+            $timeTillNextRun = $nextRun - time();
+            $this->info("Waiting for $timeTillNextRun seconds...");
+            return;
         }
 
+        Cache::put(self::CACHE_KEY, time() + $cooldown, 60);
+
         $currentDate = now()->subSeconds(self::CACHE_DURATION)->format('Y-m-d H:i:s');
-        $notificationCharacters = NotificationCharacter::where('updated_at', '<=', $currentDate);
-        $notificationCharacters->each(function ($notificationCharacter) use ($tokensToCheckPerRun) {
-            // Check amount processed
-            if ($this->tokensChecked === $tokensToCheckPerRun) {
-                return;
-            }
-            $this->tokensChecked++;
+        $notificationCharacter = NotificationCharacter::where('updated_at', '<=', $currentDate)->first();
+        $token = RefreshToken::where('character_id', $notificationCharacter->character_id)->first();
+        Notifications::dispatch($token)->onQueue('medium');
+        $notificationCharacter->touch();
 
-            $token = RefreshToken::where('character_id', $notificationCharacter->character_id)->first();
-            Notifications::dispatch($token)->onQueue('medium');
-            $notificationCharacter->touch();
-        });
-
-        $this->info('Processed notification character tokens.');
+        $this->info('Processed notification character token.');
     }
 }
