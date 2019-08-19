@@ -16,14 +16,24 @@ class SeatNotificationsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->addRoutes();
         $this->registerTranslations();
         $this->registerConfig();
-        $this->registerViews();
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         $this->commands([
             NotificationsCommand::class,
-            CreateNotificationCharacterCommand::class
         ]);
+    }
+
+    /**
+     * Include the routes.
+     */
+    public function addRoutes()
+    {
+
+        if (! $this->app->routesAreCached()) {
+            include __DIR__ . '/../Http/routes.php';
+        }
     }
 
     /**
@@ -49,26 +59,6 @@ class SeatNotificationsServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/../Config/config.php', 'seatnotifications'
         );
-    }
-
-    /**
-     * Register views.
-     *
-     * @return void
-     */
-    public function registerViews()
-    {
-        $viewPath = resource_path('views/modules/seatnotifications');
-
-        $sourcePath = __DIR__.'/../Resources/views';
-
-        $this->publishes([
-            $sourcePath => $viewPath
-        ],'views');
-
-        $this->loadViewsFrom(array_merge(array_map(function ($path) {
-            return $path . '/modules/seatnotifications';
-        }, \Config::get('view.paths')), [$sourcePath]), 'seatnotifications');
     }
 
     /**

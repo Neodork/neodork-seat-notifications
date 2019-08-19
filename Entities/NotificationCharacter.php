@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class NotificationCharacter extends Model
 {
-    protected $fillable = ['character_id', 'last_queried'];
+    protected $fillable = ['character_id', 'group'];
 
     /**
      * The table associated with the model.
