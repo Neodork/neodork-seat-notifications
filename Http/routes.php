@@ -17,6 +17,10 @@ Route::group([
             Route::group(['prefix' => 'notification/character'], function () {
                 Route::post('/group/update/', 'NotificationCharacterController@updateNotificationGroup');
             });
+
+            Route::group(['prefix' => 'search'], function () {
+                Route::get('/character/{name}', 'SearchController@searchCharacter');
+            });
         });
 
     });

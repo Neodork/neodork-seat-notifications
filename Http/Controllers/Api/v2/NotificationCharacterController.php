@@ -9,7 +9,6 @@ use Neodork\SeatNotifications\Interpreter\CharacterPayloadInterpreter;
 use Neodork\SeatNotifications\Interpreter\UpdateNotifcationCharacterGroupInterpreter;
 use Seat\Api\Http\Controllers\Api\v2\ApiController;
 use Seat\Eveapi\Models\Character\CharacterInfo;
-use Seat\Eveapi\Models\Character\CharacterNotification;
 
 /**
  * Class CharacterController.
